@@ -1,0 +1,77 @@
+document.addEventListener('DOMContentLoaded', function () {
+  // Initialize EmailJS
+  emailjs.init('YOUR_PUBLIC_KEY_HERE'); // Replace with your EmailJS public key
+
+  AOS.init({
+    duration: 900,
+    easing: 'ease-out-cubic',
+    once: true,
+  });
+
+  const typed = new Typed('#typed', {
+    strings: [
+      'Data Scientist.',
+      'AI Developer.',
+      'Full Stack Developer.',
+      'Big Data Specialist.',
+    ],
+    typeSpeed: 80,
+    backSpeed: 45,
+    backDelay: 1800,
+    loop: true,
+  });
+
+  const themeToggle = document.getElementById('theme-toggle');
+  const currentTheme = localStorage.getItem('portfolioTheme');
+  if (currentTheme === 'dark') {
+    document.body.classList.add('dark');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+    localStorage.setItem('portfolioTheme', theme);
+  });
+
+  const navLinks = document.querySelectorAll('.nav-links a');
+  navLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const href = link.getAttribute('href');
+      document.querySelector(href).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const contactForm = document.getElementById('contactForm');
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = {
+      name: contactForm.name.value,
+      email: contactForm.email.value,
+      message: contactForm.message.value,
+    };
+
+    emailjs
+      .send(
+        'YOUR_SERVICE_ID_HERE', // Replace with your EmailJS service ID
+        'YOUR_TEMPLATE_ID_HERE', // Replace with your EmailJS template ID
+        {
+          to_email: 'mbwambocolman@gmail.com',
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        }
+      )
+      .then(
+        function (response) {
+          alert('Thanks for your message! I will reply soon.');
+          contactForm.reset();
+        },
+        function (error) {
+          alert('Failed to send message. Please try again or contact me directly.');
+          console.log('EmailJS error:', error);
+        }
+      );
+  });
+});
