@@ -1,19 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
-const nodemailer = require('nodemailer');
-const cors = require('cors');   // ✅ add this
-
-const envPath = fs.existsSync(path.join(__dirname, '.env'))
-  ? path.join(__dirname, '.env')
-  : path.join(__dirname, 'projects', '.env');
-require('dotenv').config({ path: envPath });
-console.log(`Loaded env from ${envPath}`);
+const express = require("express");
+const cors = require("cors");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-// ✅ Allow requests from your Vercel frontend
+// ✅ Allow your Vercel frontends
 app.use(cors({
   origin: [
     "https://portfolio-colman.vercel.app",
@@ -22,13 +15,47 @@ app.use(cors({
   methods: ["GET", "POST"],
 }));
 
-
-app.use(express.json());
-app.disable('etag');
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  next();
+// ✅ Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST, // smtp.gmail.com
+  port: process.env.SMTP_PORT, // 587
+  secure: process.env.SMTP_SECURE === "true", // false
+  auth: {
+    user: process.env.SMTP_USER, // your Gmail
+    pass: process.env.SMTP_PASS, // 16-char App Password
+  },
 });
-app.use(express.static(path.join(__dirname), { etag: false, maxAge: 0 }));
 
-// ... rest of your nodemailer + /send route code ...
+// ✅ Verify transporter at startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("SMTP transporter verification failed:", error);
+  } else {
+    console.log("SMTP transporter ready");
+  }
+});
+
+// ✅ Contact form route
+app.post("/send", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    await transporter.sendMail({
+      from: email,
+      to: process.env.SMTP_USER,
+      subject: `Portfolio Contact from ${name}`,
+      text: message,
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Error sending mail:", error);
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+// ✅ Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
