@@ -15,9 +15,13 @@ const PORT = process.env.PORT || 3000;
 
 // ✅ Allow requests from your Vercel frontend
 app.use(cors({
-  origin: "https://portfolio-colman.vercel.app", 
+  origin: [
+    "https://portfolio-colman.vercel.app",
+    "https://portfolio-livid-seven-51x0q3bknn.vercel.app"
+  ],
   methods: ["GET", "POST"],
 }));
+
 
 app.use(express.json());
 app.disable('etag');
