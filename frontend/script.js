@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const contactForm = document.getElementById('contactForm');
   const formMessage = document.getElementById('formMessage');
   console.log('Contact form handler active');
+
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -94,9 +95,11 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Submitting contact form', formData);
 
     try {
-      const res = await fetch('/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // ✅ Updated to use Render backend URL
+      const backendURL = "https://portfolio-backend.onrender.com/send";
+      const res = await fetch(backendURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
