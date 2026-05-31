@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Submitting contact form', formData);
 
     try {
-      // ✅ Updated to use Render backend URL
-      const backendURL = "https://portfolio-backend-prpc.onrender.com/send";;
+      // ✅ Correct Render backend URL
+      const backendURL = "https://portfolio-backend-prpc.onrender.com/send";
       const res = await fetch(backendURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
