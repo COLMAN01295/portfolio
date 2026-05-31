@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       // ✅ Updated to use Render backend URL
-      const backendURL = "https://portfolio-backend.onrender.com/send";
+      const backendURL = "https://portfolio-backend-prpc.onrender.com/send";;
       const res = await fetch(backendURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
